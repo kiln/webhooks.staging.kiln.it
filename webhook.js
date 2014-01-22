@@ -64,14 +64,12 @@ http.createServer(function (request, response) {
             
             var details = JSON.parse(querystring.parse(data).payload);
             if (details.ref == "refs/heads/" + BRANCH) {
-                console.log("Changes pushed by %s <%s>", details.pusher.name, details.pusher.email);
+                console.log("Changes pushed to %s by %s <%s>", project_name, details.pusher.name, details.pusher.email);
                 
                 runCommand("/usr/bin/git", ["pull"], function() {
-                    // runCommand("/usr/bin/grunt", ["build"], function() {
-                        response.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
-                        response.write("Done!");
-                        response.end();
-                    // });
+                    response.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
+                    response.write("Done!");
+                    response.end();
                 });
             }
             else {
