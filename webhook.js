@@ -50,7 +50,7 @@ http.createServer(function (request, response) {
                     success_callback();
                 }
                 else {
-                    console.log("Git returned an error");
+                    console.log("A command returned an error: " + command);
                     response.writeHead(500, "Internal Server Error");
                     response.end();
                 }
@@ -67,9 +67,19 @@ http.createServer(function (request, response) {
                 console.log("Changes pushed to %s by %s <%s>", project_name, details.pusher.name, details.pusher.email);
                 
                 runCommand("/usr/bin/git", ["pull"], function() {
-                    response.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
-                    response.write("Done!");
-                    response.end();
+                    fs.exists("bin/post-update", function(exists) {
+                        if (exists) {
+                            runCommand("bin/post-update", [], function() {
+                                response.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
+                                response.write("Done!");
+                                response.end();
+                            });
+                        } else {
+                            response.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
+                            response.write("Done!");
+                            response.end();
+                        }
+                    });
                 });
             }
             else {
