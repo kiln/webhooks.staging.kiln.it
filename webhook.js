@@ -82,8 +82,12 @@ http.createServer(function (request, response) {
                     });
                 });
             }
+            else if (!details.ref) {
+                console.log("%s: 'ref' not specified", project_name);
+                console.log(JSON.stringify(details));
+            }
             else {
-                console.log("Ignoring push to %s", details.ref);
+                console.log("%s: Ignoring push to %s", project_name, details.ref);
             }
         });
     }
