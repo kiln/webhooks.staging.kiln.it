@@ -2,7 +2,7 @@
  *  A simple GitHub webhook to deploy our apps to staging when they’re updated.
  */
 
-const DIRECTORY = "/home/robin/Kiln",
+const DIRECTORY = "/home/kiln",
       BRANCH = "master",
       PORT = 9001;
 
