@@ -26,7 +26,7 @@ http.createServer(function (request, response) {
         path_components = request_url.pathname.split("/"),
         project_name = path_components[1];
     
-    if (!project_name.match(/^[A-Za-z][0-9.A-Za-z_-]+$/) || !fs.existsSync(project_name)) {
+    if (!project_name.match(/^[A-Za-z0-9][0-9.A-Za-z_-]+$/) || !fs.existsSync(project_name)) {
         console.log("Rejecting request for '%s'", project_name);
         response.writeHead(404, "Not Found");
         response.end();
