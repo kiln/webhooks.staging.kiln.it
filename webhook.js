@@ -1,3 +1,5 @@
+#!/usr/bin/nodejs
+
 /*
  *  A simple GitHub webhook to deploy our apps to staging when they’re updated.
  */
