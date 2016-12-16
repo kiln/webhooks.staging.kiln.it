@@ -90,6 +90,9 @@ http.createServer(function (request, response) {
             }
             else {
                 console.log("%s: Ignoring push to %s", project_name, details.ref);
+                response.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
+                response.write("Ignoring push to " + details.ref);
+                response.end();
             }
         });
     }
