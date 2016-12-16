@@ -5,7 +5,7 @@
  */
 
 const DIRECTORY = "/home/ubuntu",
-      BRANCH = "master",
+      BRANCH = "live",
       PORT = 9001;
 
 var fs = require("fs"),
