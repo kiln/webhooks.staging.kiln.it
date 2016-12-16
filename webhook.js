@@ -19,20 +19,20 @@ http.createServer(function (request, response) {
         response.end();
         return;
     }
-    
+
     process.chdir(DIRECTORY);
-    
+
     var request_url = url.parse(request.url),
         path_components = request_url.pathname.split("/"),
         project_name = path_components[1];
-    
+
     if (!project_name.match(/^[A-Za-z0-9][0-9.A-Za-z_-]+$/) || !fs.existsSync(project_name)) {
         console.log("Rejecting request for '%s'", project_name);
         response.writeHead(404, "Not Found");
         response.end();
         return;
     }
-    
+
     try {
         process.chdir(project_name);
     }
@@ -42,7 +42,7 @@ http.createServer(function (request, response) {
         response.end();
         return;
     }
-    
+
     function runCommand(command, args, success_callback) {
         child_process.spawn(command, args, {stdio: "inherit"})
             .on("close", function(status) {
@@ -56,16 +56,16 @@ http.createServer(function (request, response) {
                 }
             });
     }
-    
+
     try {
         var data = "";
         request.on("data", function(chunk) { data += chunk; })
                .on("end", function() {
-            
+
             var details = JSON.parse(querystring.parse(data).payload);
             if (details.ref == "refs/heads/" + BRANCH) {
                 console.log("Changes pushed to %s by %s <%s>", project_name, details.pusher.name, details.pusher.email);
-                
+
                 runCommand("/usr/bin/git", ["pull"], function() {
                     fs.exists("bin/post-update", function(exists) {
                         if (exists) {
