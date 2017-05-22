@@ -5,7 +5,6 @@
  */
 
 const DIRECTORY = "/home/ubuntu",
-      BRANCH = "live",
       PORT = 9001;
 
 var fs = require("fs"),
@@ -59,13 +58,13 @@ http.createServer(function (request, response) {
             });
     }
 
-    try {
+    function pullBranch(branch) {
         var data = "";
         request.on("data", function(chunk) { data += chunk; })
                .on("end", function() {
 
             var details = JSON.parse(querystring.parse(data).payload);
-            if (details.ref == "refs/heads/" + BRANCH) {
+            if (details.ref == "refs/heads/" + branch) {
                 console.log("Changes pushed to %s by %s <%s>", project_name, details.pusher.name, details.pusher.email);
 
                 runCommand("/usr/bin/git", ["pull"], function() {
@@ -96,9 +95,25 @@ http.createServer(function (request, response) {
             }
         });
     }
-    catch (e) {
-        console.log("Internal error", e.stack);
-        response.writeHead(500, "Internal Server Error");
-        response.end();
-    }
+
+    child_process.exec("git rev-parse --abbrev-ref HEAD", function(error, stdout, stderr) {
+        if (error) {
+            console.log(stderr);
+            console.log("Failed to get branch for " + project_name);
+            response.writeHead(500, "Internal Server Error");
+            response.end();
+            return;
+        }
+
+        const branch = stdout.trim();
+        try {
+            pullBranch(branch);
+        }
+        catch (e) {
+            console.error("Internal error", e.stack);
+            response.writeHead(500, "Internal Server Error");
+            response.end();
+        }
+    });
+
 }).listen(PORT);
