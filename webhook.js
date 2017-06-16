@@ -87,7 +87,7 @@ http.createServer(function (request, response) {
         });
     }
 
-    child_process.exec("git rev-parse --abbrev-ref HEAD", function(error, stdout, stderr) {
+    child_process.execFile("git", ["rev-parse", "--abbrev-ref", "HEAD"], { cwd: project_name }, function(error, stdout, stderr) {
         if (error) {
             console.log(stderr);
             console.log("Failed to get branch for " + project_name);
