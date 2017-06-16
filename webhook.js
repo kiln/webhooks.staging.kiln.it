@@ -10,8 +10,11 @@ const DIRECTORY = "/home/ubuntu",
 var fs = require("fs"),
     http = require("http"),
     child_process = require("child_process"),
+    path = require("path"),
     querystring = require("querystring"),
     url = require("url");
+
+process.chdir(DIRECTORY);
 
 http.createServer(function (request, response) {
     if (request.method != "POST") {
@@ -20,8 +23,6 @@ http.createServer(function (request, response) {
         response.end();
         return;
     }
-
-    process.chdir(DIRECTORY);
 
     var request_url = url.parse(request.url),
         path_components = request_url.pathname.split("/"),
@@ -34,18 +35,8 @@ http.createServer(function (request, response) {
         return;
     }
 
-    try {
-        process.chdir(project_name);
-    }
-    catch (e) {
-        console.log("Cannot chdir to '%s'", project_name);
-        response.writeHead(500, "Internal Server Error");
-        response.end();
-        return;
-    }
-
     function runCommand(command, args, success_callback) {
-        child_process.spawn(command, args, {stdio: "inherit"})
+        child_process.spawn(command, args, { stdio: "inherit", cwd: project_name })
             .on("close", function(status) {
                 if (status == 0) {
                     success_callback();
