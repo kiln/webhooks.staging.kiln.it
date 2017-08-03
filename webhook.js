@@ -58,19 +58,21 @@ http.createServer(function (request, response) {
             if (details.ref == "refs/heads/" + branch) {
                 console.log("Changes pushed to %s by %s <%s>", project_name, details.pusher.name, details.pusher.email);
 
-                runCommand("/usr/bin/git", ["pull"], function() {
-                    fs.exists(path.join(project_name, "bin", "post-update"), function(exists) {
-                        if (exists) {
-                            runCommand("bin/post-update", [], function() {
+                runCommand("/usr/bin/git", ["fetch"], function() {
+                    runCommand("/usr/bin/git", ["reset", "--hard", "FETCH_HEAD"], function() {
+                        fs.exists(path.join(project_name, "bin", "post-update"), function(exists) {
+                            if (exists) {
+                                runCommand("bin/post-update", [], function() {
+                                    response.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
+                                    response.write("Done!");
+                                    response.end();
+                                });
+                            } else {
                                 response.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
                                 response.write("Done!");
                                 response.end();
-                            });
-                        } else {
-                            response.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
-                            response.write("Done!");
-                            response.end();
-                        }
+                            }
+                        });
                     });
                 });
             }
