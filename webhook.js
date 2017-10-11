@@ -79,6 +79,9 @@ http.createServer(function (request, response) {
             else if (!details.ref) {
                 console.log("%s: 'ref' not specified", project_name);
                 console.log(JSON.stringify(details));
+                response.writeHead(500, {"Content-Type": "text/plain; charset=utf-8"});
+                response.write("Ignoring push with unspecified 'ref'");
+                response.end();
             }
             else {
                 console.log("%s: Ignoring push to %s", project_name, details.ref);
