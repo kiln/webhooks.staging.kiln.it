@@ -39,7 +39,7 @@ http.createServer(function (request, response) {
 		child_process.spawn(command, args, { stdio: "inherit", cwd: project_name })
 			.on("close", function(status) {
 				if (status == 0) {
-					success_callback();
+					if (success_callback) success_callback();
 				}
 				else {
 					console.log("A command returned an error: " + command);
