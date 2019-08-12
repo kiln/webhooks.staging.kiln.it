@@ -11,7 +11,6 @@ const fs = require("fs"),
       http = require("http"),
       child_process = require("child_process"),
       path = require("path"),
-      querystring = require("querystring"),
       url = require("url");
 
 process.chdir(DIRECTORY);
@@ -54,7 +53,7 @@ http.createServer(function (request, response) {
 		request.on("data", function(chunk) { data += chunk; })
 			   .on("end", function() {
 
-			var details = JSON.parse(querystring.parse(data).payload);
+			var details = JSON.parse(data);
 			if (details.ref == "refs/heads/" + branch) {
 				console.log("Changes pushed to %s by %s <%s>", project_name, details.pusher.name, details.pusher.email);
 
